@@ -166,24 +166,6 @@ def load_or_train_model():
             model = train_and_save_model()
         return model
     except Exception as e:
-        # Common cause: scikit-learn internal classes changed between versions (pickle/unpickle incompatibility).
-        # Example error: "Can't get attribute '_RemainderColsList' on <module 'sklearn.compose._column_transformer'...>"
-        msg = str(e)
-        if "_RemainderColsList" in msg or "Can't get attribute" in msg:
-            st.warning("Saved model appears incompatible with the installed scikit-learn version. Retraining a compatible model now...")
-            # Remove the incompatible artifact (if present) and retrain with current sklearn
-            try:
-                if os.path.exists(PIPELINE_PATH):
-                    os.remove(PIPELINE_PATH)
-            except Exception:
-                # non-fatal if we can't remove the file; proceed to retrain anyway
-                pass
-
-            with st.spinner("Retraining model to produce a compatible artifact..."):
-                model = train_and_save_model()
-            return model
-
-        # Unknown error: show and stop
         st.error(f"An error occurred while loading or training the model: {e}")
         st.stop()
         return None
