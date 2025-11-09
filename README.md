@@ -14,8 +14,7 @@ This repository provides a Streamlit web application that predicts a patient's s
 
 1. Create and activate a virtual environment
 
-   # Prefer Python 3.11 for binary wheel compatibility with scikit-learn
-   py -3.11 -m venv .venv
+   python -m venv .venv
    .venv\Scripts\activate
 
 2. Install dependencies
@@ -82,29 +81,5 @@ If your CSV uses different headings, `app.py` contains a `rename_map` in `train_
 ## Security & medical disclaimer
 
 This project is for demonstration and educational use only. It is not medical advice. The model outputs should not be used as a substitute for professional medical evaluation.
-
-## Deployment on Streamlit (Cloud) and other hosts
-
-- Important: Hosted platforms (Streamlit Community Cloud, Heroku, Azure Web Apps, etc.) create their own Python environment when deploying your app. You cannot upload or "run" your local `.venv` on the host. Instead, the host installs dependencies listed in `requirements.txt` into a fresh environment.
-
-- What you must do for Streamlit Cloud:
-   1. Commit and push your repo (with the updated `requirements.txt` that pins `scikit-learn==1.3.2`) to GitHub.
-   2. Go to https://share.streamlit.io and create a new app, point it at your GitHub repo + branch and set the entrypoint to `app.py`.
-   3. The platform will create an environment and run `pip install -r requirements.txt` automatically. Because `scikit-learn` is pinned, the correct version (1.3.2) will be installed if the platform supports a compatible Python version.
-
-- Notes about Python versions and wheels:
-   - Some packages (notably `scikit-learn`) provide prebuilt wheels only for certain Python versions. If the host uses a Python version without a compatible wheel, the package may need to be built from source (slow or fail). To avoid this, prefer hosts that use Python 3.11 (or ensure the host supports Python 3.11).
-   - If you need complete control over the environment (Python version, system packages), consider using Docker. With Docker, you build an image locally or in CI that contains the exact runtime and dependencies, then deploy that image.
-
-- Quick checklist for a successful Streamlit deploy:
-   - `requirements.txt` pins critical packages (we pinned `scikit-learn==1.3.2`).
-   - `app.py` is the Streamlit entrypoint (top-level script).
-   - Push to GitHub and configure the Streamlit app to use that repo/branch.
-
-- Alternative approaches:
-   - Docker: Add a `Dockerfile` that installs a specific Python version and pip requirements. Deploy the image to any container host.
-   - Platform-specific runtime files: Some hosts accept a `runtime.txt` (Heroku) or UI setting to choose Python versions — check your host's docs.
-
-If you want, I can add a short Dockerfile example or a one-line snippet to the README showing how to push and connect the repo to Streamlit Cloud.
 
 
