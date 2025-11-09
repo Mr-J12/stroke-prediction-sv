@@ -334,7 +334,7 @@ def main():
                         )
                     elif p < 70:
                         return (
-                            "### Precautions — Very high risk (50–70%)\n"
+                            "### Precautions — Very High risk (50–70%)\n"
                             "This is a very high predicted probability — seek prompt medical assessment and act quickly to reduce risk.\n\n"
                             "**Immediate steps (do these now):**\n"
                             "- Arrange an urgent appointment with your GP or local urgent care to review blood pressure and medications.\n"
@@ -348,7 +348,7 @@ def main():
                         )
                     else:
                         return (
-                            "### Precautions — Critical / highest risk (70–100%)\n"
+                            "### Precautions — Critical risk (70–100%)\n"
                             "Predicted probability is very high — this indicates an urgent need for medical evaluation and likely rapid intervention.\n\n"
                             "**Do not delay:**\n"
                             f"{urgent_signs}"
