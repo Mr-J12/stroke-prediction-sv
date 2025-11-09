@@ -1,14 +1,18 @@
- 
+
 # Stroke Prediction App
 
-This repository provides a Streamlit web application that predicts a patient's stroke risk using a scikit-learn pipeline (preprocessing + stacking classifier). The app either loads a pre-trained pipeline (`stroke_pipeline.joblib`) or trains a new one from the provided CSV dataset on first run.
+This repository contains a Streamlit web application that predicts a patient's stroke risk using a saved stacked classifier and preprocessing artifacts. The app will attempt to load pre-trained artifacts on startup; if they are missing and the optional training dependency is installed, it can train and save a new model from the included CSV dataset.
 
-## What’s included
-- `app.py` — Main Streamlit application (loads or trains the pipeline and serves the UI).
-- `healthcare-dataset-stroke-data.csv` — Expected dataset used to train the model (CSV in repo root).
-- `stroke_pipeline.joblib` — Serialized scikit-learn Pipeline produced by training (created after training completes).
+## What’s in this repo
+- `app.py` — Main Streamlit application. Loads pre-trained artifacts or (optionally) trains a new model.
+- `healthcare-dataset-stroke-data.csv` — Dataset used for training (included in repo root).
+- `stroke_model.joblib` — Serialized stacked model (if present).
+- `scaler.joblib` — Saved StandardScaler for continuous features.
+- `model_columns.joblib` — Saved column ordering used for aligning inputs at prediction time.
 - `minorpro.ipynb` — Notebook used during development/EDA (optional).
-- `requirements.txt` — (present) Python dependencies; use it to install required packages.
+- `requirements.txt` — Python dependencies.
+
+> Note: The app's `app.py` expects the artifacts above (`stroke_model.joblib`, `scaler.joblib`, `model_columns.joblib`). If those are missing the app will try to train a new stacked classifier but training requires the `layerlearn` package (optional).
 
 ## Quick start (Windows — cmd.exe)
 
@@ -21,64 +25,59 @@ This repository provides a Streamlit web application that predicts a patient's s
 
    pip install -r requirements.txt
 
-   If you prefer installing manually:
-   pip install streamlit pandas scikit-learn joblib
+   If you want to enable training from `app.py` (optional), ensure the `layerlearn` package is installed as well:
 
-3. Ensure the dataset `healthcare-dataset-stroke-data.csv` is in the project root. The app expects this filename by default. If your file is named differently, update the `RAW_DATA_PATH` constant in `app.py`.
+   pip install layerlearn
+
+3. Ensure the dataset is present
+
+   The app expects `healthcare-dataset-stroke-data.csv` in the repository root if training is required. If you only want to run predictions using the provided artifacts, no dataset is required.
 
 4. Run the Streamlit app
 
    streamlit run app.py
 
-   Note: On first run, if `stroke_pipeline.joblib` is missing the app will train the pipeline — this may take several minutes depending on your machine.
+   - On first run the app will try to load `stroke_model.joblib`, `scaler.joblib`, and `model_columns.joblib` from the project root.
+   - If artifacts are missing and `layerlearn` is installed, the app will attempt to train a new stacked classifier and save the three artifacts.
 
-## Dataset format
+## Files and artifacts explained
 
-The app expects a CSV with columns that map to the following internal feature names used by the pipeline:
+- `stroke_model.joblib` — The fitted FlexibleStackedClassifier (if present).
+- `scaler.joblib` — StandardScaler fitted on continuous columns (`age`, `avg_glucose_level`, `bmi`).
+- `model_columns.joblib` — Column order (after one-hot encoding) used at training time. The app aligns user input to this ordering before prediction.
 
-id, gender, age, hypertension, heart_disease, ever_married, work_type, Residence_type, avg_glucose_level, bmi, smoking_status, stroke
+If you want to force retraining, delete the three artifact files above (or run the training function directly) and restart the app with `layerlearn` available.
 
-Example row (from the dataset):
+## How the app processes data (brief)
 
-33943,Female,39,0,0,Yes,Private,Urban,83.24,26.3,never smoked,1
+- Categorical features (one-hot encoded): `gender`, `work_type`, `smoking_status`, `ever_married`, `Residence_type`.
+- Continuous features (scaled): `age`, `avg_glucose_level`, `bmi` (scaled using `scaler.joblib`).
+- Binary features passed as 0/1: `hypertension`, `heart_disease`.
 
-- `stroke` is a binary target where 1 indicates stroke. During training the app normalizes column names and derives the `stroke` target if the CSV uses a different target column name.
+At prediction time the app:
+- collects user inputs via the sidebar,
+- one-hot encodes the categorical fields,
+- reindexes columns to match `model_columns.joblib` (filling missing columns with zeros),
+- applies the saved `scaler.joblib` to continuous columns,
+- and uses `stroke_model.joblib` to predict class and probability.
 
-If your CSV uses different headings, `app.py` contains a `rename_map` in `train_and_save_model()` that maps common alternative column names to the internal names — update that mapping if needed.
+## Retraining (optional)
 
-## How the model works
+To retrain inside the app you must have `layerlearn` installed (the training code uses `FlexibleStackedClassifier` from that package). Steps:
 
-- Preprocessing
-  - Continuous features: `age`, `avg_glucose_level`, `bmi` are scaled with `StandardScaler`.
-  - Categorical features: `gender`, `work_type`, `smoking_status`, `ever_married`, `Residence_type` are one-hot encoded (`OneHotEncoder(handle_unknown='ignore', drop='first')`).
-  - Binary passthrough: `hypertension`, `heart_disease` are passed through.
+1. Install `layerlearn` in your environment.
+2. Make sure `healthcare-dataset-stroke-data.csv` is in the repo root.
+3. Start the app; when it cannot find saved artifacts it will attempt to train and save `stroke_model.joblib`, `scaler.joblib`, and `model_columns.joblib`.
 
-- Model
-  - A stacking classifier is used: LogisticRegression as the base estimator and RandomForestClassifier as the meta-estimator.
-  - The entire preprocessor + model is assembled into a scikit-learn `Pipeline` and saved to `stroke_pipeline.joblib`.
-
-## Inputs and outputs
-
-- Inputs: The app UI collects patient data (gender, age, hypertension, heart disease, marital status, work type, residence type, average glucose, BMI, smoking status).
-- Outputs: Predicted class (0 = No Stroke, 1 = Stroke) and probability of stroke (displayed as a percentage). The app also provides tailored precautionary guidance based on probability ranges.
-
-## Retraining and artifacts
-
-- To force retraining, delete `stroke_pipeline.joblib` from the project root and restart the app. The app will train a new pipeline using the CSV dataset.
-- The training function performs basic cleaning (numeric casting, filling `bmi` missing values with the mean, normalizing marital status strings, dropping single 'Other' gender rows if present) before fitting the pipeline.
+Training can take several minutes depending on your machine.
 
 ## Troubleshooting
 
-- "Raw data file not found": Place `healthcare-dataset-stroke-data.csv` in the repository root or change `RAW_DATA_PATH` in `app.py`.
-- Unexpected categories in categorical columns: Re-train so the encoder learns the categories, or ensure `handle_unknown='ignore'` is enabled (the current pipeline uses this).
-- Missing Python packages: Install packages with `pip install -r requirements.txt` or the manual install line above.
+- If the app cannot load models: ensure `stroke_model.joblib`, `scaler.joblib`, and `model_columns.joblib` exist in the project root or install `layerlearn` and provide the CSV to allow training.
+- If continuous columns are missing during prediction: make sure `model_columns.joblib` matches the encoder used at training time; retraining will regenerate it.
+- If you see dependency errors: re-run `pip install -r requirements.txt` and install `layerlearn` if you need training capability.
 
-## Development notes
-
-- The helper function `get_precautions(prob)` in `app.py` returns user-facing guidance based on the predicted probability. You can edit these messages to match local clinical guidance or language preferences.
-- If you plan to deploy this app in production or share with clinicians, please consult domain experts and validate with proper clinical datasets.
-
-## Security & medical disclaimer
+## Disclaimer
 
 This project is for demonstration and educational use only. It is not medical advice. The model outputs should not be used as a substitute for professional medical evaluation.
 
