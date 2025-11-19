@@ -158,7 +158,7 @@ def main():
         age = st.sidebar.number_input("Age", min_value=1, max_value=120, value=50, step=1)
         hypertension = st.sidebar.selectbox("Hypertension", ("No", "Yes"))
         heart_disease = st.sidebar.selectbox("Heart Disease", ("No", "Yes"))
-        ever_married = st.sidebar.selectbox("Ever Married", ("Yes", "No"))
+        ever_married = st.sidebar.selectbox("Married", ("Yes", "No"))
         work_type = st.sidebar.selectbox(
             "Work Type",
             ("Private", "Self-employed", "Govt_job", "children", "Never_worked"),
@@ -179,7 +179,7 @@ def main():
             'age': age,
             'hypertension': 1 if hypertension == "Yes" else 0,
             'heart_disease': 1 if heart_disease == "Yes" else 0,
-            'ever_married': ever_married,
+            'married': ever_married,
             'work_type': work_type,
             'Residence_type': residence_type,
             'avg_glucose_level': avg_glucose_level,
