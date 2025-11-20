@@ -135,9 +135,9 @@ def load_or_train():
 
 
 def main():
-    st.set_page_config(page_title="Stroke Prediction App", page_icon="🧠", layout="wide")
+    st.set_page_config(page_title="RiskGuard", page_icon="🤖", layout="wide")
 
-    st.title("🧠 Stroke Prediction Model")
+    st.title("🤖 Stroke Prediction Model")
     st.markdown(
         "This app predicts the likelihood of a patient having a stroke based on their health parameters. "
         "Fill in the details on the sidebar to get a prediction."
