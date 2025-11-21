@@ -5,7 +5,7 @@ gender: Female
 age: 40
 hypertension: No
 heart_disease: No
-ever_married: Yes
+married: Yes
 work_type: Private
 Residence_type: Urban
 avg_glucose_level: 100.0
@@ -20,7 +20,7 @@ gender: Female
 age: 54
 hypertension: No
 heart_disease: No
-ever_married: Yes
+married: Yes
 work_type: Govt_job
 Residence_type: Rural
 avg_glucose_level: 110.0
@@ -35,7 +35,7 @@ gender: Male
 age: 66
 hypertension: Yes
 heart_disease: No
-ever_married: Yes
+married: Yes
 work_type: Govt_job
 Residence_type: Urban
 avg_glucose_level: 135.0
@@ -50,12 +50,12 @@ gender: Male
 age: 65
 hypertension: Yes
 heart_disease: No
-ever_married: Yes
+married: Yes
 work_type: Private
 Residence_type: Urban
 avg_glucose_level: 140.0
 bmi: 32
-smoking_status: smokes
+smoking_status: formerly smokes
 Why: Multiple major risk factors (age, hypertension, active smoking, high glucose/BMI) — expect a high probability.
 
 5) Very high risk — older, multiple severe risks
@@ -65,7 +65,7 @@ gender: Female
 age: 70
 hypertension: Yes
 heart_disease: Yes
-ever_married: No
+married: No
 work_type: Private
 Residence_type: Urban
 avg_glucose_level: 220.0
@@ -80,7 +80,7 @@ gender: Male
 age: 80
 hypertension: Yes
 heart_disease: Yes
-ever_married: No
+married: No
 work_type: Private
 Residence_type: Urban
 avg_glucose_level: 200.0
