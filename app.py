@@ -88,7 +88,7 @@ def train_and_save_model(csv_path="healthcare-dataset-stroke-data.csv"):
 
     # Define models
     base_model = LogisticRegression(max_iter=1000, random_state=42, class_weight='balanced')
-    meta_model = RandomForestClassifier(random_state=0, class_weight='balanced')
+    meta_model = RandomForestClassifier(random_state=42, class_weight='balanced')
 
     fsc = FlexibleStackedClassifier(base_model, meta_model)
     fsc.fit(X_train, y_train)
