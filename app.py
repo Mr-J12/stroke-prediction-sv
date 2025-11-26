@@ -265,7 +265,7 @@ def main():
                     )
                     if p < 10:
                         return (
-                            "### Precautions — Low risk (0–10%)\n"
+                            "### Precautions —Very Low risk (0–10%)\n"
                             "Your predicted risk is low. Continue healthy habits and routine preventive care.\n\n"
                             "**Daily & lifestyle:**\n"
                             f"{common_include}\n\n"
@@ -277,7 +277,7 @@ def main():
                         )
                     elif p < 20:
                         return (
-                            "### Precautions — Mild risk (10–20%)\n"
+                            "### Precautions — Low risk (10–20%)\n"
                             "Mildly elevated risk — small, consistent changes can lower your long-term risk.\n\n"
                             "**Lifestyle actions (practical):**\n"
                             f"{common_include}\n"
@@ -332,9 +332,9 @@ def main():
                             "**Follow-up:**"
                             " Specialist or primary-care follow-up within 1–2 weeks is essential."
                         )
-                    elif p < 70:
+                    elif p < 60:
                         return (
-                            "### Precautions — Very High risk (50–70%)\n"
+                            "### Precautions — Very High risk (50–60%)\n"
                             "This is a very high predicted probability — seek prompt medical assessment and act quickly to reduce risk.\n\n"
                             "**Immediate steps (do these now):**\n"
                             "- Arrange an urgent appointment with your GP or local urgent care to review blood pressure and medications.\n"
@@ -346,9 +346,26 @@ def main():
                             "**Follow-up:**"
                             " Clinical review within days and close monitoring until risk factors are controlled."
                         )
+                    elif p < 70:
+                        return (
+                            "### Precautions — Critical risk (60–70%)\n"
+                            "Predicted probability is critically high — urgent medical evaluation and intervention are required.\n\n"
+                            "**Do not delay:**\n"
+                            f"{urgent_signs}"
+                            "**Immediate actions:**\n"
+                            "- Contact your GP or attend an urgent care center immediately for assessment.\n"
+                            "- If asymptomatic but high risk, arrange same-day urgent review with primary care or a stroke prevention service.\n\n"
+                            "**Medical:**\n"
+                            "- Expect rapid investigations (bloods, ECG, imaging) and fast-tracked specialist input.\n"
+                            "- Management may include urgent optimisation of blood pressure, start/adjust statin therapy, anticoagulation if atrial fibrillation is found, and other targeted therapies as clinically indicated.\n\n"
+                            "**Support & planning:**\n"
+                            "- Arrange help at home if mobility or function is affected; involve family/carers in planning.\n"
+                            "**Follow-up:**"
+                            " Close specialist-led follow-up and monitoring; consider multidisciplinary rehabilitation or secondary prevention pathways."
+                        )
                     else:
                         return (
-                            "### Precautions — Critical risk (70–100%)\n"
+                            "### Precautions — Extremely Critical risk (70–100%)\n"
                             "Predicted probability is very high — this indicates an urgent need for medical evaluation and likely rapid intervention.\n\n"
                             "**Do not delay:**\n"
                             f"{urgent_signs}"
