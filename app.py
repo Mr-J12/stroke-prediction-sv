@@ -10,7 +10,7 @@ from sklearn.metrics import accuracy_score, classification_report
 # Try to import FlexibleStackedClassifier, but make it optional if layerlearn isn't installed
 # for the main app logic (it's only required for *training*).
 try:
-    from layerlearn import FlexibleStackedClassifier
+    from layerlearn.flexiblestacked import FlexibleStackedClassifier
 except ImportError:
     FlexibleStackedClassifier = None
     print(
