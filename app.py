@@ -111,16 +111,6 @@ def train_and_save_model(csv_path="healthcare-dataset-stroke-data.csv"):
 # --- Load or train model assets ---
 @st.cache_data
 def load_or_train():
-    # Try loading existing artifacts; otherwise train
-    try:
-        model = joblib.load('stroke_model.joblib')
-        scaler = joblib.load('scaler.joblib')
-        model_columns = joblib.load('model_columns.joblib')
-        return model, scaler, model_columns
-    except Exception as e:
-        st.warning(
-            f"Could not load pre-trained models ({e}). Attempting to train a new model..."
-        )
         try:
             # Train the model (may raise if dependencies missing)
             model, scaler, model_columns = train_and_save_model()
@@ -129,7 +119,7 @@ def load_or_train():
         except Exception as train_e:
             st.error(
                 f"Failed to train new model. Error: {train_e}. "
-                "Please ensure 'layerlearn' is installed and 'healthcare-dataset-stroke-data.csv' is present."
+                "Please ensure 'layeredlearning' is installed and 'healthcare-dataset-stroke-data.csv' is present."
             )
             return None, None, None
 
