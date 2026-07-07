@@ -4,7 +4,7 @@ import joblib
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
 from sklearn.linear_model import LogisticRegression
-from sklearn.ensemble import RandomForestClassifier
+from sklearn.ensemble import RandomForestClassifier, StackingClassifier
 from sklearn.metrics import accuracy_score, classification_report
 
 # Try to import FlexibleStackedClassifier, but make it optional if layerlearn isn't installed
@@ -20,11 +20,7 @@ except ImportError:
 
 
 def train_and_save_model(csv_path="healthcare-dataset-stroke-data.csv"):
-    if FlexibleStackedClassifier is None:
-        raise ImportError(
-            "layerlearn is required to train the stacked model. "
-            "Install it (`pip install layerlearn`) or provide pre-trained joblib files."
-        )
+
 
     # Load dataset
     try:
@@ -87,10 +83,16 @@ def train_and_save_model(csv_path="healthcare-dataset-stroke-data.csv"):
     )
 
     # Define models
-    base_model = LogisticRegression(max_iter=1000, random_state=42, class_weight='balanced')
-    meta_model = RandomForestClassifier(random_state=42, class_weight='balanced')
+    base_estimators = [
+        ('rf', RandomForestClassifier(n_estimators=100, random_state=42)),
+        ('lr', LogisticRegression(max_iter=1000, random_state=42)),
+    ]
 
-    fsc = FlexibleStackedClassifier(base_model, meta_model)
+    fsc = StackingClassifier(
+        estimators=base_estimators,
+        final_estimator=LogisticRegression(max_iter=1000, random_state=42),
+        cv=5,
+    )
     fsc.fit(X_train, y_train)
 
     # Evaluation (prints)
